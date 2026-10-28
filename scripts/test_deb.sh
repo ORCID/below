@@ -41,7 +41,11 @@ done
 # Not /tmp: systemd may mount a tmpfs over it after docker cp has written there.
 docker cp "$deb" "$container:/root/below.deb"
 docker exec "$container" apt-get install -y -qq /root/below.deb
-docker exec "$container" below --version
 version=$(dpkg-deb --field "$deb" Version)
-test "$(docker exec "$container" below --version)" = "below ${version%-*}"
+reported=$(docker exec "$container" below --version)
+echo "$reported"
+case $reported in
+  "below ${version%-*}" | "below ${version%-*} (rev "*")") ;;
+  *) echo "below --version does not match the package version $version" >&2; exit 1 ;;
+esac
 docker exec "$container" systemctl is-enabled below

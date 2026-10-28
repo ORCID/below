@@ -15,12 +15,15 @@
 use std::env;
 use std::ffi::OsString;
 use std::path::PathBuf;
+use std::process::Command;
 
 use libbpf_cargo::SkeletonBuilder;
 
 const SRC: &str = "./src/bpf/exitstat.bpf.c";
 
 fn main() {
+    set_git_revision_hash();
+
     let mut out =
         PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR must be set in build script"));
     out.push("exitstat.skel.rs");
@@ -44,4 +47,30 @@ fn main() {
     compile_error!(
         "In order to build without vendored dependencies please disable default features"
     );
+}
+
+/// Make the commit available to the build as `BELOW_BUILD_GIT_HASH`, unless
+/// HEAD is the `v<version>` release tag.
+fn set_git_revision_hash() {
+    let Some(rev) = git(&["rev-parse", "--short=10", "HEAD"]) else {
+        return;
+    };
+    let branch = git(&["symbolic-ref", "-q", "HEAD"]);
+    for git_ref in std::iter::once("HEAD").chain(branch.as_deref()) {
+        if let Some(path) = git(&["rev-parse", "--git-path", git_ref]) {
+            println!("cargo:rerun-if-changed={path}");
+        }
+    }
+    let tag = format!("v{}", env::var("CARGO_PKG_VERSION").unwrap());
+    let tags = git(&["tag", "--points-at", "HEAD"]).unwrap_or_default();
+    if !tags.lines().any(|t| t == tag) {
+        println!("cargo:rustc-env=BELOW_BUILD_GIT_HASH={rev}");
+    }
+}
+
+fn git(args: &[&str]) -> Option<String> {
+    let output = Command::new("git").args(args).output().ok()?;
+    let stdout = String::from_utf8(output.stdout).ok()?;
+    let stdout = stdout.trim();
+    (output.status.success() && !stdout.is_empty()).then(|| stdout.to_string())
 }
