@@ -90,7 +90,7 @@ open_source_shim!();
 static LIVE_REMOTE_MAX_LATENCY_SEC: u64 = 10;
 
 #[derive(Debug, Parser)]
-#[clap(version = option_env!("BELOW_VERSION").unwrap_or(env!("CARGO_PKG_VERSION")))]
+#[clap(version)]
 struct Opt {
     #[clap(long, value_parser, default_value = config::BELOW_DEFAULT_CONF)]
     config: PathBuf,

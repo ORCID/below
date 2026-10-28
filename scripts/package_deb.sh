@@ -22,7 +22,4 @@ set -eu
 
 cd "$(dirname "$(realpath "$0")")"/..
 
-triple=$1
-version=$(scripts/version.sh)
-
-cargo deb --package below --no-build --target "$triple" --deb-version "$version"
+cargo deb --package below --no-build --target "$1"

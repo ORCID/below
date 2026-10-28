@@ -42,5 +42,6 @@ done
 docker cp "$deb" "$container:/root/below.deb"
 docker exec "$container" apt-get install -y -qq /root/below.deb
 docker exec "$container" below --version
-test "$(docker exec "$container" below --version)" = "below $(dpkg-deb --field "$deb" Version)"
+version=$(dpkg-deb --field "$deb" Version)
+test "$(docker exec "$container" below --version)" = "below ${version%-*}"
 docker exec "$container" systemctl is-enabled below

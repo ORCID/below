@@ -45,13 +45,14 @@ cargo test
 # Debian packages
 
 `scripts/package_deb.sh <target triple>` packages a release build as
-`target/<triple>/debian/below_<version>_<arch>.deb`. The package installs
+`target/<triple>/debian/below_<version>-1_<arch>.deb`. The package installs
 `/usr/bin/below` and enables and starts `below.service`, which records to
 `/var/log/below/store`.
 
-Tagged releases publish amd64 and arm64 packages, built on Ubuntu 22.04, and
+Pushing a `v<version>` tag that matches the version in `below/Cargo.toml`
+publishes a release with amd64 and arm64 packages, built on Ubuntu 22.04, and
 the matching binaries. Install one with:
 
 ```shell
-sudo apt install ./below_<version>_amd64.deb
+sudo apt install ./below_<version>-1_amd64.deb
 ```
