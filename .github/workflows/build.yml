@@ -39,9 +39,6 @@ jobs:
       TARGET: ${{ matrix.arch }}-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v4
-        with:
-          # package_deb.sh versions the package from the release tag.
-          fetch-depth: 0
       - run: >
           sudo apt-get update &&
           sudo apt-get install -y clang-15 libelf-dev m4 pkg-config zlib1g-dev
@@ -49,7 +46,7 @@ jobs:
         with:
           components: rustfmt
       - uses: Swatinem/rust-cache@v2
-      - run: cargo install --locked cargo-deb
+      - run: cargo install --locked cargo-deb@3.8.0
       - run: cargo build --release --locked --package below --target "$TARGET"
       # Skip tests that require host to have cgroup2
       - run: >
@@ -64,7 +61,7 @@ jobs:
         id: package
         run: |
           scripts/package_deb.sh "$TARGET"
-          package=$(ls target/$TARGET/debian/below_*.deb)
+          package=$(ls "target/$TARGET"/debian/below_*.deb)
           test "$(dpkg-deb --field "$package" Architecture)" = "${{ matrix.debarch }}"
           echo "path=$package" >> "$GITHUB_OUTPUT"
       - run: scripts/test_deb.sh "${{ steps.package.outputs.path }}" ubuntu:22.04

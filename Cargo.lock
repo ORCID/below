@@ -108,7 +108,7 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
 name = "below"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-common",
@@ -146,7 +146,7 @@ dependencies = [
 
 [[package]]
 name = "below-btrfs"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "below-common",
  "libc",
@@ -161,7 +161,7 @@ dependencies = [
 
 [[package]]
 name = "below-common"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -177,7 +177,7 @@ dependencies = [
 
 [[package]]
 name = "below-config"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-btrfs",
@@ -190,7 +190,7 @@ dependencies = [
 
 [[package]]
 name = "below-dump"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-common",
@@ -209,7 +209,7 @@ dependencies = [
 
 [[package]]
 name = "below-ethtool"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "nix",
  "serde",
@@ -218,7 +218,7 @@ dependencies = [
 
 [[package]]
 name = "below-gpu-stats"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "below-common",
  "serde",
@@ -226,7 +226,7 @@ dependencies = [
 
 [[package]]
 name = "below-model"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -251,7 +251,7 @@ dependencies = [
 
 [[package]]
 name = "below-render"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "below-common",
  "below-model",
@@ -259,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "below-store"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-common",
@@ -285,7 +285,7 @@ dependencies = [
 
 [[package]]
 name = "below-tc"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "netlink-packet-core",
  "netlink-packet-route",
@@ -297,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "below-view"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-common",
@@ -320,11 +320,11 @@ dependencies = [
 
 [[package]]
 name = "below-vmlinux"
-version = "0.11.0"
+version = "0.12.0"
 
 [[package]]
 name = "below_derive"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -466,7 +466,7 @@ checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
 
 [[package]]
 name = "cgroupfs"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "anyhow",
  "below-common",
@@ -979,7 +979,7 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
 
 [[package]]
 name = "fb_procfs"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "below-common",
  "libc",
@@ -2106,7 +2106,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "resctrlfs"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "below-common",
  "maplit",

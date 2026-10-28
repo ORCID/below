@@ -1,0 +1,31 @@
+# Task automation. `mise tasks` lists them. below only builds on Linux.
+
+[tools]
+actionlint = "1.7.12"
+shellcheck = "0.11.0"
+"cargo:cargo-edit" = "0.13.14"
+"cargo:cargo-deb" = "3.8.0"
+
+[tasks.version]
+description = "Set the version of every workspace crate: mise run version 0.12.1"
+usage = 'arg "<version>"'
+run = 'cargo set-version --workspace "${usage_version?}"'
+
+[tasks.deb]
+description = "Build below and package it as a .deb for this machine's architecture"
+run = [
+  'cargo build --release --locked --package below --target "$(uname -m)-unknown-linux-gnu"',
+  'scripts/package_deb.sh "$(uname -m)-unknown-linux-gnu"',
+]
+
+[tasks."test:deb"]
+description = "Install the newest .deb in an Ubuntu systemd container and check it"
+run = 'scripts/test_deb.sh "$(ls -t target/*/debian/below_*.deb | head -1)"'
+
+[tasks."lint:actions"]
+description = "Lint the release workflows"
+run = "actionlint .github/workflows/build.yml .github/workflows/release.yml"
+
+[tasks."lint:scripts"]
+description = "Run ShellCheck on the packaging scripts"
+run = "shellcheck scripts/package_deb.sh scripts/test_deb.sh"

@@ -89,7 +89,16 @@ open_source_shim!();
 
 static LIVE_REMOTE_MAX_LATENCY_SEC: u64 = 10;
 
+/// The crate version, with the commit for builds that aren't a release tag.
+fn version() -> String {
+    match option_env!("BELOW_BUILD_GIT_HASH") {
+        None => env!("CARGO_PKG_VERSION").to_string(),
+        Some(hash) => format!("{} (rev {hash})", env!("CARGO_PKG_VERSION")),
+    }
+}
+
 #[derive(Debug, Parser)]
+#[clap(version = version())]
 struct Opt {
     #[clap(long, value_parser, default_value = config::BELOW_DEFAULT_CONF)]
     config: PathBuf,
