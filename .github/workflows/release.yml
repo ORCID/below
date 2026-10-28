@@ -1,0 +1,35 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deb:
+    uses: ./.github/workflows/build_deb.yml
+    with:
+      upload: true
+
+  release:
+    needs: deb
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/**/below-*
+            dist/**/*.deb
+          fail_on_unmatched_files: true
+          generate_release_notes: true
