@@ -41,5 +41,5 @@ done
 # Not /tmp: systemd may mount a tmpfs over it after docker cp has written there.
 docker cp "$deb" "$container:/root/below.deb"
 docker exec "$container" apt-get install -y -qq /root/below.deb
-docker exec "$container" below --version
+docker exec "$container" below --help >/dev/null
 docker exec "$container" systemctl is-enabled below
