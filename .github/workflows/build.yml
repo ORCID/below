@@ -1,4 +1,4 @@
-name: deb
+name: build
 
 on:
   workflow_call:
@@ -20,8 +20,8 @@ permissions:
   contents: read
 
 jobs:
-  deb:
-    name: deb (${{ matrix.debarch }})
+  build:
+    name: build (${{ matrix.debarch }})
     # Building on 22.04 keeps the glibc requirement at 2.35.
     runs-on: ${{ matrix.runner }}
     strategy:

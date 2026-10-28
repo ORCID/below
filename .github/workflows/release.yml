@@ -12,13 +12,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deb:
-    uses: ./.github/workflows/build_deb.yml
+  build:
+    uses: ./.github/workflows/build.yml
     with:
       upload: true
 
   release:
-    needs: deb
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
