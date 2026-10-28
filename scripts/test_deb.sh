@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # Install a below .deb in an Ubuntu container running systemd and check the
-# binary runs and the recording service is enabled.
+# binary reports the package version and the recording service is enabled.
 #   scripts/test_deb.sh <path/to/below.deb> [image]
 
 set -eu
@@ -41,5 +41,6 @@ done
 # Not /tmp: systemd may mount a tmpfs over it after docker cp has written there.
 docker cp "$deb" "$container:/root/below.deb"
 docker exec "$container" apt-get install -y -qq /root/below.deb
-docker exec "$container" below --help >/dev/null
+docker exec "$container" below --version
+test "$(docker exec "$container" below --version)" = "below $(dpkg-deb --field "$deb" Version)"
 docker exec "$container" systemctl is-enabled below
