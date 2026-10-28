@@ -1,0 +1,85 @@
+name: build
+
+on:
+  workflow_call:
+    inputs:
+      upload:
+        description: Upload the package and binary as workflow artifacts.
+        type: boolean
+        required: false
+        default: false
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: Upload the package and binary as workflow artifacts.
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (${{ matrix.debarch }})
+    # Building on 22.04 keeps the glibc requirement at 2.35.
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            debarch: amd64
+            runner: ubuntu-22.04
+          - arch: aarch64
+            debarch: arm64
+            runner: ubuntu-22.04-arm
+    env:
+      CLANG: clang-15
+      TARGET: ${{ matrix.arch }}-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # package_deb.sh versions the package from the release tag.
+          fetch-depth: 0
+      - run: >
+          sudo apt-get update &&
+          sudo apt-get install -y clang-15 libelf-dev m4 pkg-config zlib1g-dev
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install --locked cargo-deb
+      - run: cargo build --release --locked --package below --target "$TARGET"
+      # Skip tests that require host to have cgroup2
+      - run: >
+          cargo test --release --locked --target "$TARGET"
+          --
+          --skip test_dump
+          --skip advance_forward_and_reverse
+          --skip disable_disk_stat
+          --skip disable_io_stat
+          --skip record_replay_integration
+      - name: Build Debian package
+        id: package
+        run: |
+          scripts/package_deb.sh "$TARGET"
+          package=$(ls target/$TARGET/debian/below_*.deb)
+          test "$(dpkg-deb --field "$package" Architecture)" = "${{ matrix.debarch }}"
+          echo "path=$package" >> "$GITHUB_OUTPUT"
+      - run: scripts/test_deb.sh "${{ steps.package.outputs.path }}" ubuntu:22.04
+      - run: scripts/test_deb.sh "${{ steps.package.outputs.path }}" ubuntu:24.04
+      - if: inputs.upload
+        run: cp "target/$TARGET/release/below" "target/$TARGET/release/below-$TARGET"
+      - uses: actions/upload-artifact@v4
+        if: inputs.upload
+        with:
+          name: deb-${{ matrix.debarch }}
+          path: ${{ steps.package.outputs.path }}
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: inputs.upload
+        with:
+          name: binary-${{ matrix.debarch }}
+          path: target/${{ matrix.arch }}-unknown-linux-gnu/release/below-${{ matrix.arch }}-unknown-linux-gnu
+          if-no-files-found: error

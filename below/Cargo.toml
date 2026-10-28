@@ -14,6 +14,7 @@ license = "Apache-2.0"
 
 [package.metadata.deb]
 depends = "libelf1, zlib1g"
+maintainer-scripts = "../etc"
 
 [package.metadata.deb.systemd-units]
 unit-name = "below"
