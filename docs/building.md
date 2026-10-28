@@ -49,9 +49,10 @@ cargo test
 `/usr/bin/below` and enables and starts `below.service`, which records to
 `/var/log/below/store`.
 
-Pushing a `v<version>` tag that matches the version in `below/Cargo.toml`
-publishes a release with amd64 and arm64 packages, built on Ubuntu 22.04, and
-the matching binaries. Install one with:
+To release, run `mise run version <version>` to set the version of every
+workspace crate, merge that, then push a `v<version>` tag. The tag must match
+the version in `below/Cargo.toml`. The release has amd64 and arm64 packages,
+built on Ubuntu 22.04, and the matching binaries. Install one with:
 
 ```shell
 sudo apt install ./below_<version>-1_amd64.deb
